@@ -1,0 +1,55 @@
+{
+    "manifest_version": 3,
+    "name": "HSLU Module Master",
+    "description": "For HSLU students, this browser extension offers a concise overview of all modules. It provides detailed descriptions, schedules, major distinctions, a visual timetable for planning semesters and it includes all marks and grades.",
+    "version": "1.0",
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "studiengangVerwalter@hslu-study-data.ch"
+      }
+    },
+    "icons": {
+      "48": "icons/icon-48.png",
+      "96": "icons/icon-96.png",
+      "128": "icons/icon-128.png"
+    },
+    "action": {
+      "default_icon": {
+        "48": "icons/icon-48.png",
+        "96": "icons/icon-96.png",
+        "128": "icons/icon-128.png"
+      },
+      "default_title": "HSLU Module Master",
+      "default_popup": "popup/popup.html"
+    },
+    "content_scripts": [
+      {
+        "matches": [
+          "*://*.mycampus.hslu.ch/*/stud-i/mein-studium/meine-anmeldungen/*",
+          "*://*.int-mycampus.hslu.ch/*/stud-i/mein-studium/meine-anmeldungen/*",
+          "file:///*Luzern.html"
+        ],
+        "js": [
+          "components/contentGenerator.js",
+          "components/dataExtractor.js",
+          "components/student.js",
+          "components/translator.js",
+          "main.js"
+        ],
+        "css": [
+          "templates/content.css"
+        ]
+      }
+    ],
+    "permissions": [
+      "webRequest",
+      "storage",
+      "unlimitedStorage"
+    ],
+    "host_permissions": [
+      "https://mycampus.hslu.ch/*"
+    ],
+    "web_accessible_resources": [
+      
+    ]
+  }

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Options Menu for HSLU Module Master extension</title>
+    <link type="text/css" rel="stylesheet" href="popup_style.css">
+    <script src="../components/translator.js"></script>
+    <script src="popup.js"></script>
+</head>
+
+<body>
+    <div id="infotext">
+        <p>Bearbeite oder ergänze hier Studiums- und Moduldaten.</p>
+    </div>
+
+    <div id="my-studies">
+        <h1>Mein Studium</h1>
+        <table id="my-studies-table">
+            <!-- Header row for "my-studies" table -->
+            <thead>
+                <tr>
+                    <th>Studiengang</th>
+                    <th>Art</th>
+                    <th>Start</th>
+                    <th>Major/Minor</th>
+                </tr>
+            </thead>
+            <!-- Content row for "my-studies" table -->
+            <tbody>
+                <tr id="my-studies-row">
+                    <td>
+                        <select id="studyProgram" data-property="studyProgram">
+                            <option value="ICS">ICS</option>
+                            <option value="AIML">AIML</option>
+                            <option value="I">I</option>
+                            <option value="WI">WI</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select id="studySchedule" data-property="studySchedule">
+                            <option value="Vollzeit">Vollzeit</option>
+                            <option value="Teilzeit">Teilzeit</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select id="startSemester" data-property="startSemester">
+                            <!-- Options will be dynamically added using JavaScript -->
+                        </select>
+                    </td>
+                    <td>
+                        <select id="studyMajor" data-property="studyMajor">
+                            <!-- Options will be dynamically added using JavaScript -->
+                        </select>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="modules">
+        <h1>Meine Module</h1>
+        <table id="module-table">
+            <!-- Header row for "Modules" table -->
+            <thead>
+                <tr>
+                    <!-- <th></th> -->
+                    <th>Modul</th>
+                    <th>Sem.</th>
+                    <th>Note</th>
+                    <th>Grade</th>
+                    <th>ECTS</th>
+                    <th>Modultyp</th>
+                    <th>Durchführung</th>
+                </tr>
+            </thead>
+            <!-- Content rows for "Modules" table (editable) -->
+            <tbody>
+                <tr id="modules-row">
+                    <!-- <td class="minus-button" onclick="removeRow(this)">-</td> -->
+                    <td contenteditable="true" data-property="moduleName"></td>
+                    <td contenteditable="true" data-property="semester"></td>
+                    <td contenteditable="true" data-property="note"></td>
+                    <td contenteditable="true" data-property="grade"></td>
+                    <td contenteditable="true" data-property="ects"></td>
+                    <td contenteditable="true" data-property="moduleType"></td>
+                    <td contenteditable="true" data-property="durchfuehrung"></td>
+                </tr>
+                <!-- Last empty row without a button
+            <tr id="last-empty-row">
+              <td></td>
+              <td contenteditable="true" data-property="moduleName"></td>
+              <td contenteditable="true" data-property="semester"></td>
+              <td contenteditable="true" data-property="note"></td>
+              <td contenteditable="true" data-property="grade"></td>
+              <td contenteditable="true" data-property="ects"></td>
+              <td contenteditable="true" data-property="moduleType"></td>
+              <td contenteditable="true" data-property="durchfuehrung"></td>
+            </tr> -->
+            </tbody>
+        </table>
+    </div>
+    <div id="edit-section">
+        <select id="moduleToRemove">
+            <!-- Module names will be dynamically added using JavaScript -->
+        </select>
+        <button id="removeModuleBtn">Modul entfernen</button>
+        <button id="resetManualEditsBtn">Reset</button>
+    </div>
+</body>
+
+</html>

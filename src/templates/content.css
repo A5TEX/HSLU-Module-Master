@@ -1,0 +1,172 @@
+tbody tr {
+    transition: background 0.25s ease;
+}
+
+tbody tr:hover {
+    background: rgba(240, 240, 240);
+}
+
+.info-box {
+    position: fixed;
+    /* or 'absolute' depending on your layout */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    /* or any appropriate width */
+    padding: 2px;
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    /* Make sure it's above other elements */
+    display: none;
+    /* Hide by default */
+}
+
+/* Style to show the info box */
+.show-info-box {
+    display: block;
+}
+
+#modules-visited-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 2px;
+}
+
+.visited-module {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 2px;
+    border-radius: 2px;
+}
+
+#timetable-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+#timetable-container h2 {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 2px;
+}
+
+#timetable-container div {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 2px;
+    border-radius: 2px;
+    margin-bottom: 2px;
+}
+
+#timetable-container div:hover {
+    background-color: #e0e0e0;
+}
+
+#semester-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    font-size: 16px;
+}
+
+#semester-select:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+#wochenübersicht-toggle-button {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    font-size: 8px;
+    margin-top: 5px;
+}
+
+
+/* 
+========================================
+    Searchable Module List per Semester
+*/
+
+#filter-input {
+    margin-top: 80px;
+    margin-bottom: 1.5px;
+}
+
+#toggle-description-btn {
+    margin-top: 1.5px;
+    margin-bottom: 3px;
+    float: left;
+}
+
+#module-header {
+    margin: 0px;
+    clear: left;
+    width: 600px;
+    height: 40px;
+    padding: 5px;
+    background-color: #acacac;
+}
+
+#modules-container {
+    clear: left;
+    float:left;
+    height: 600px;
+    width: 600px;
+    overflow-y: auto;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 5px;
+    margin: 1.5px;
+    margin-left: 0px;
+    margin-top: 0px;
+}
+
+#module-info-container {
+    height: 600px;
+    width: 385px;
+    float: left;
+    background-color: #f9f9f9;
+    border: solid 1px #ddd;
+    padding: 5px;
+    display: none;
+    overflow-y: auto;
+}
+
+.module {
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.module-title {
+    font-size: 1.1em;
+    color: #333;
+    margin: 0 0 2px 0;
+}
+
+.module-properties {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.property-cell {
+    padding: 0.4em 0.4em;
+    text-align: right;
+    width: 2.5em;
+    min-width: 1.5em;
+}
+
+.header-cell {
+    font-weight: bold;
+    text-align: left;
+}

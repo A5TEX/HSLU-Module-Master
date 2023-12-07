@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <script src="dataExtractor.js"></script>
+        <script>
+            function _get_study_start_spring(year) {
+                const date = new Date(year, 1, 20);
+                console.log(date);
+                const day_of_week = date.getDay();
+
+                if (day_of_week !== 1) {
+                    date.setDate(date.getDate() - ((day_of_week + 6) % 7));
+                }
+
+                return date.getDate();
+            }
+
+            function _get_study_start_autumn(year) {
+                const date = new Date(year, 8, 20);
+                const day_of_week = date.getDay();
+
+                if (day_of_week !== 1) {
+                    date.setDate(date.getDate() - ((day_of_week + 6) % 7));
+                }
+
+                return date.getDate();
+            }
+
+            function _get_semester_from_date(date) {
+                const extracted_date = new Date(date);
+                const day_of_month = extracted_date.getDate();
+                const year = extracted_date.getFullYear();
+                const month = extracted_date.getMonth() + 1;
+            
+                // console.log(_get_study_start_spring(year));
+                // console.log(_get_study_start_autumn(year));
+                // Determine the semester (H for Autumn, F for Spring)
+                let semester = null;
+                if (month == 9 && day_of_month < _get_study_start_autumn(year)) {
+                    semester = 'F';
+                } else if (month == 9 && day_of_month >= _get_study_start_autumn(year)) {
+                    semester = 'H';
+                } else if (month == 2 && day_of_month < _get_study_start_spring(year)) {
+                    semester = 'H';
+                } else if (month == 2 && day_of_month >= _get_study_start_spring(year)) {
+                    semester = 'F';
+                } else if (month >= 10 || month < 2) {
+                    semester = 'H';
+                } else {
+                    semester = 'F';
+                }
+
+                return semester + (year % 100).toString();
+            }
+
+            console.log(_get_semester_from_date('2023-09-18'));
+        </script>
+    </body>
+</html>
