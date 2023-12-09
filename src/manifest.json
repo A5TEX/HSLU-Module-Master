@@ -25,9 +25,7 @@
     "content_scripts": [
       {
         "matches": [
-          "*://*.mycampus.hslu.ch/*/stud-i/mein-studium/meine-anmeldungen/*",
-          "*://*.int-mycampus.hslu.ch/*/stud-i/mein-studium/meine-anmeldungen/*",
-          "file:///*Luzern.html"
+          "*://*.mycampus.hslu.ch/*/stud-i/mein-studium/meine-anmeldungen/*"
         ],
         "js": [
           "components/contentGenerator.js",
