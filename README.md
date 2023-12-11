@@ -6,10 +6,10 @@ The project was inspired by an <a href="https://github.com/eddex/hslu-simple-mep
 
 ## Contributors
 Students working on the Project:
-- <a href="https://github.com/OAmezDroz">Oliver Amez-Droz</a> (olivier.amez-droz@stud.hslu.ch)
-- <a href="https://github.com/A5TEX">Livio Biotti</a> (livio.biotti@stud.hslu.ch)
+- <a href="https://github.com/OAmezDroz" target="_blank">Oliver Amez-Droz</a> (olivier.amez-droz@stud.hslu.ch)
+- <a href="https://github.com/A5TEX" target="_blank">Livio Biotti</a> (livio.biotti@stud.hslu.ch)
 - David Koch (david.koch@stud.hslu.ch)
-- <a href="https://github.com/Celine235">Celine235</a>
+- <a href="https://github.com/Celine235" target="_blank">Celine235</a>
 - spalinger
 
 <br>HSLU Secretary's office contact:
