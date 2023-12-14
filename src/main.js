@@ -37,9 +37,11 @@ async function displayContent() {
 
   // Create the Student Object
   student = new Student(student_data);
-  // Create the ContentGenerator Object
-  let studyProgram = student.studyProgram.toLowerCase();
-  ectsResult_from_API = await dataExtractor.get_required_ects_per_moduletype(studyProgram);
+  
+  if (student.studyProgram !== null) {
+    let studyProgram = student.studyProgram.toLowerCase();
+    ectsResult_from_API = await dataExtractor.get_required_ects_per_moduletype(studyProgram);
+  }
 
   await createSemesterSelect();
   createSemesterCheckBox();

@@ -327,18 +327,23 @@ class ContentGenerator {
 
     // Create and append stats element
     let statsElement = document.createElement("p");
-    let noten_string = `Notenschnitt: ${averageGrade} 
-      <br>Ects Total: ${totalCredits} / ${ectsResult.TotalECTS}
-      <br>Kernmodule: ${creditsByType.Kernmodule} / ${ectsResult.ectsPerModule.Kernmodule}
-      <br>Projektmodule: ${creditsByType.Projektmodule} / ${ectsResult.ectsPerModule.Projektmodule}
-      <br>Erweiterungsmodule: ${creditsByType.Erweiterungsmodule} / ${ectsResult.ectsPerModule.Erweiterungsmodule}
-      <br>Zusatzmodule: ${creditsByType.Zusatzmodule} / ${ectsResult.ectsPerModule.Zusatzmodule}`;
+    let noten_string;
+    if (ectsResult !== null) {
+        noten_string = `Notenschnitt: ${averageGrade} 
+          <br>Ects Total: ${totalCredits} / ${ectsResult.TotalECTS}
+          <br>Kernmodule: ${creditsByType.Kernmodule} / ${ectsResult.ectsPerModule.Kernmodule}
+          <br>Projektmodule: ${creditsByType.Projektmodule} / ${ectsResult.ectsPerModule.Projektmodule}
+          <br>Erweiterungsmodule: ${creditsByType.Erweiterungsmodule} / ${ectsResult.ectsPerModule.Erweiterungsmodule}
+          <br>Zusatzmodule: ${creditsByType.Zusatzmodule} / ${ectsResult.ectsPerModule.Zusatzmodule}`;
 
-    if (!(typeof ectsResult.ectsPerModule.Majormodule === 'undefined')) {
-      noten_string += `<br>Majormodule: ${creditsByType.Major_Minormodule} / ${ectsResult.ectsPerModule.Majormodule}`;
-    }
-    if (!(typeof ectsResult.ectsPerModule.Minormodule === 'undefined')) {
-      noten_string += `<br>Minormodule: ${creditsByType.Major_Minormodule} / ${ectsResult.ectsPerModule.Minormodule}`;
+          if (!(typeof ectsResult.ectsPerModule.Majormodule === 'undefined')) {
+            noten_string += `<br>Majormodule: ${creditsByType.Major_Minormodule} / ${ectsResult.ectsPerModule.Majormodule}`;
+          }
+          if (!(typeof ectsResult.ectsPerModule.Minormodule === 'undefined')) {
+            noten_string += `<br>Minormodule: ${creditsByType.Major_Minormodule} / ${ectsResult.ectsPerModule.Minormodule}`;
+          }
+    } else {
+        noten_string = 'Unable to fetch ECTS from API because Study Programm is unknown.';
     }
 
     statsElement.innerHTML = noten_string;

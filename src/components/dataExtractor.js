@@ -383,7 +383,12 @@ class DataExtractor {
     _get_study_program() {
         let anchorElement = document.querySelector('a[href="/de-ch/service-sites/login"]');
         let text = anchorElement ? anchorElement.innerText : null;
-        return text.split(".")[1].split("_")[0].replace("BSC", "");
+        if (text !== null) {
+            const studyProgram = text.split(".")[1].split("_")[0].replace("BSC", "");
+            return studyProgram;
+        }
+        console.log("Could not extract study program from MyCampus")
+        return null;
     }
 
     // extracts student data from mycampus
