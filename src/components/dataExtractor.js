@@ -381,7 +381,7 @@ class DataExtractor {
     }
 
     _get_study_program() {
-        let anchorElement = document.querySelector('a[href="/de-ch/service-sites/login/"]');
+        let anchorElement = document.querySelector('a[href="/de-ch/service-sites/login"]');
         let text = anchorElement ? anchorElement.innerText : null;
         return text.split(".")[1].split("_")[0].replace("BSC", "");
     }
