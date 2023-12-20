@@ -1,14 +1,14 @@
 // TO DO: Every edit is saved as a string - this causes errors.
 //        Empty modules cause errors in contentGenerator.js.
-//        Refresh of page after closing popup or after Module data is saved.
 //        Translations.
-//        Maybe change Modultyp to letters K, E, P, M (Major/Minor)
+//        Improvement? Change Modultyp to letters K, E, P, M (Major/Minor)
 
 const studyMajorOptionsByStudiengang = {
     ICS: ['Attack Specialist & Penetration Tester (MSP)', 'Digital Forensics & Incident Response (MSF)', 'Security of Cloud, Mobile & IoT (MSC)', 'Security Management (MSM)', 'Security Technology (MST)'],
     I: ['Artificial Intelligence & Visual Computing', 'Augmented & Virtual Reality', 'Data Engineering & Data Science', 'Software Engineering & DevOps', 'Human Computer Interaction Design', 'IT Operation & Security', 'Software Development'],
     AIML: ['Information + Cyber Security Minor', 'Software Engineering Minor', 'Medtech + Healthcare Minor', 'Cognitive Robotics Minor'],
-    WI: ['Augmented & Virtual Reality', 'Business Analysis', 'Digital Business', 'Data Engineering & Data Science', 'Human Computer Interaction Design', 'IT Operation & Security', 'Informatik PLUS']
+    WI: ['Augmented & Virtual Reality', 'Business Analysis', 'Digital Business', 'Data Engineering & Data Science', 'Human Computer Interaction Design', 'IT Operation & Security', 'Informatik PLUS'],
+    DI: ['']
 };
 const myStudiesProperties = ["studyProgram", "studySchedule", "startSemester", "studyMajor"];
 const moduleProperties = ["moduleName", "semester", "note", "grade", "ects", "moduleType", "durchfuehrung"];
@@ -73,7 +73,6 @@ async function _get_from_localstorage(itemID) {
 
 async function getStudentData() {
     try {
-        // Use _get_from_localstorage instead of extractor.get_student_data()
         const studentData = await _get_from_localstorage('student');
         console.log("Student Data:", studentData);
         return studentData || {};
@@ -100,12 +99,14 @@ function displayMyStudies(student_data) {
         const dropdown = document.getElementById(property);
 
         if (dropdown) {
-            dropdown.value = student_data[property] || '';
+            dropdown.onload = () => {
+                dropdown.value = student_data[property] || '';
 
-            if (property === 'studyMajor') {
-                // Populate study major dropdown based on selected study program
-                populateStudyMajorDropdown(dropdown, student_data.studyProgram);
-            }
+                if (property === 'studyMajor') {
+                    // Populate study major dropdown based on selected study program
+                    populateStudyMajorDropdown(dropdown, student_data.studyProgram);
+                }
+            };
         } else {
             console.error(`Dropdown not found for property: ${property}`);
         }
@@ -257,19 +258,18 @@ function populateModuleDropdown(selectElement, modulesVisited) {
 
 async function removeModule(selectElement) {
     try {
-        const selectedIndex = selectElement.value;
+        const selectedIndex = parseInt(selectElement.value, 10);
         const student_data = await getStudentData();
 
-        if (student_data.modulesVisited && selectedIndex >= 0 && selectedIndex < student_data.modulesVisited.length) {
+        if (student_data.modulesVisited && !isNaN(selectedIndex) && selectedIndex >= 0 && selectedIndex < student_data.modulesVisited.length) {
             // Remove the selected module from the array
             student_data.modulesVisited.splice(selectedIndex, 1);
 
             // Save the updated student data
             await saveStudentData(student_data);
 
-            // Refresh the module dropdown and modules table
-            populateModuleDropdown(selectElement, student_data.modulesVisited);
-            displayModulesInTable(student_data);
+            // Reload the extension popup
+            window.location.reload();
         } else {
             console.error("Invalid module index or modulesVisited array is undefined/empty.", student_data.modulesVisited);
         }
@@ -374,25 +374,32 @@ function removeInlineEditListeners() {
     });
 }
 
-// TO BE TESTED after _get_student_data_from_webpage() gets implemented in dataExtractor.js
 async function resetModules() {
     try {
-        const studentData = await getStudentData();
+        // Ask for confirmation before clearing data
+        const isConfirmed = window.confirm("Alle manuellen Änderungen löschen?");
 
-        // Reset modules data
-        studentData.modulesVisited = [];
+        if (!isConfirmed) {
+            // User canceled the operation
+            return;
+        }
 
-        // Save the updated student data to sync storage
-        await saveStudentData(studentData);
+        // Clear all local storage data for the extension
+        const storage = typeof browser !== 'undefined' ? browser.storage.sync : chrome.storage.sync;
+        await storage.clear();
 
-        // Update the module dropdown and modules table
-        const moduleToRemoveDropdown = document.getElementById('moduleToRemove');
-        populateModuleDropdown(moduleToRemoveDropdown, studentData.modulesVisited);
-        displayModulesInTable(studentData);
+        // Reload the active tab
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            const activeTab = tabs[0];
+            chrome.tabs.reload(activeTab.id, { bypassCache: true }, function () {
+                // Close the popup after initiating the reload
+                window.close();
+            });
+        });
 
-        console.log("Modules reset successfully.");
+        console.log("Local storage data cleared successfully. Page reloaded.");
     } catch (error) {
-        console.error("Error resetting modules:", error);
+        console.error("Error clearing local storage data:", error);
     }
 }
 

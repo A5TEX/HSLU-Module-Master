@@ -6,6 +6,7 @@ const dataExtractor = new DataExtractor(
   "44f9a67d3b6d540c474f6c6d126fedde"
 );
 
+// Define global variables
 let contentGenerator = null;
 let student = null;
 let visitedModules = null;
@@ -14,6 +15,21 @@ let ectsResult_from_API = null;
 const creditsByType = {};
 const main_container = document.getElementById("wrapper").querySelector(".relative.site_content.no-mood").querySelector(".row");
 
+/**
+ * Asynchronously displays the content of the extension.
+ *
+ * This function first creates a loading animation and logs a loading message.
+ * It then attempts to get the student data from the local storage, with a timeout of 1 second.
+ * If the timeout is reached, it extracts the student data from the webpage and saves it to the local storage.
+ * It then creates a Student object from the student data.
+ * If the student's study program is not null, it gets the required ECTS per module type for the study program.
+ * It then creates a semester select dropdown and appends it to the main container.
+ * It gets the modules visited by the student and the ECTS obtained by the student for each module type.
+ * It then displays the visited modules and the timetable, and generates the modules by semester.
+ * Finally, it hides the loading animation.
+ *
+ * @async
+ */
 async function displayContent() {
   contentGenerator = new ContentGenerator();
   contentGenerator.createLoadingAnimation();
@@ -25,7 +41,7 @@ async function displayContent() {
   try {
     student_data = await Promise.race([
       dataExtractor.get_student_data(),
-      timeout(2000)
+      timeout(1000)
     ]);
   } catch {
     // If the timeout is reached, extract the student data from the webpage
@@ -37,33 +53,58 @@ async function displayContent() {
 
   // Create the Student Object
   student = new Student(student_data);
-  
+
   if (student.studyProgram !== null) {
     let studyProgram = student.studyProgram.toLowerCase();
     ectsResult_from_API = await dataExtractor.get_required_ects_per_moduletype(studyProgram);
   }
 
+  // Create the semester select dropdown
   await createSemesterSelect();
-  createSemesterCheckBox();
 
   visitedModules = student.getModulesVisited();
   creditsByType.Kernmodule = student.getEctsObtainedByModuletype("Kernmodul");
+  creditsByType.Projektmodule = student.getEctsObtainedByModuletype("Projektmodul");
+  creditsByType.Majormodule = student.getEctsObtainedByModuletype("Major-/Minormodul");
   creditsByType.Erweiterungsmodule = student.getEctsObtainedByModuletype("Erweiterungsmodul");
   creditsByType.Zusatzmodule = student.getEctsObtainedByModuletype("Zusatzmodul");
-  creditsByType.Projektmodule = student.getEctsObtainedByModuletype("Projektmodul");
-  creditsByType.Major_Minormodule = student.getEctsObtainedByModuletype("Major-/Minormodul");
 
-  contentGenerator.displayVisitedModules(visitedModules, student.getAverageGrade(), student.getEctsObtainedTotal(), creditsByType, ectsResult_from_API);
   contentGenerator.displayTimetable(visitedModules);
+  contentGenerator.displayModuleMaster(visitedModules, student.getAverageGrade(), student.getEctsObtainedTotal(), creditsByType, ectsResult_from_API, student.studyProgram);
 
   // Get the modules from the DataExtractor
-  contentGenerator.generateModulesBySemester(await dataExtractor.get_modules_by_semester(get_current_semester()) || []);
+  const currentDate = new Date();
+  contentGenerator.generateModulesBySemester(await dataExtractor.get_modules_by_semester(dataExtractor._get_semester_from_date(currentDate)), student.studyProgram, visitedModules);
 
   // Hide the loading indicator
   var loadingAnimation = document.getElementById("loading-animation");
   loadingAnimation.style.display = "none";
+
+  // Cleanup HTML intro text
+  const h1StrongElements = document.querySelectorAll('h1 strong');
+  const introElement = document.querySelector('.richtext.columns.intro');
+  if (introElement) {
+    introElement.remove();
+  }
+  h1StrongElements.forEach(element => {
+    element.remove();
+  });
+
 }
 
+/**
+ * Asynchronously creates a select field for semesters and appends it to the main container.
+ *
+ * This function first creates a select field and assigns it an id of 'semester-select'.
+ * It then gets a list of semesters from the DataExtractor and adds each semester as an option to the select field.
+ * It sets the default selected semester based on the current month.
+ * It adds an event listener to the select field that triggers when the selected semester changes.
+ * When the selected semester changes it displays the timetable and creates a loading animation.
+ * It then gets the modules for the selected semester from the DataExtractor and generates the modules by semester.
+ * Finally, it hides the loading animation and appends the select field to the main container.
+ *
+ * @async
+ */
 async function createSemesterSelect() {
   let startElement = main_container;
   // Create the semester select field
@@ -80,20 +121,18 @@ async function createSemesterSelect() {
   });
 
   // Set the default selected semester based on the current month
-  semesterSelect.value = get_current_semester();
+  semesterSelect.value = dataExtractor._get_semester_from_date(new Date());
 
   // Add an event listener to the semester select field
   semesterSelect.addEventListener("change", async () => {
-    // clearView();
     contentGenerator.clearView();
     contentGenerator.displayTimetable(visitedModules);
-    contentGenerator.displayVisitedModules(visitedModules, student.getAverageGrade(), student.getEctsObtainedTotal(), creditsByType, ectsResult_from_API);
     contentGenerator.createLoadingAnimation();
     // Get the current value of the semesterSelect element
     let selectedSemester = semesterSelect.value;
 
     // Get the modules from the DataExtractor
-    contentGenerator.generateModulesBySemester(await dataExtractor.get_modules_by_semester(selectedSemester) || []);
+    contentGenerator.generateModulesBySemester(await dataExtractor.get_modules_by_semester(selectedSemester) || [], student.studyProgram, visitedModules);
 
     // Hide the loading indicator
     var loadingAnimation = document.getElementById("loading-animation");
@@ -103,45 +142,5 @@ async function createSemesterSelect() {
   startElement.appendChild(semesterSelect);
 }
 
-function createSemesterCheckBox() {
-  var parentElement = main_container;
-
-  var semesterResults = document.createElement("div");
-  semesterResults.id = "semester-results";
-
-  // Create the checkbox input element
-  var semesterCheckbox = document.createElement("input");
-
-  // Set the attributes for the checkbox
-  semesterCheckbox.type = "checkbox";
-  semesterCheckbox.id = "semester-checkbox";
-  semesterCheckbox.name = "semester-checkbox";
-
-  // Optional: Create a label for the checkbox
-  var label = document.createElement("label");
-  label.htmlFor = "semester-checkbox";
-  label.appendChild(document.createTextNode("Nur Module im gewählten Semester anzeigen"));
-
-  // Append the checkbox and label to the parent element
-  semesterResults.appendChild(label);
-  semesterResults.appendChild(semesterCheckbox);
-
-  parentElement.appendChild(semesterResults);
-
-  // Add onchange event listener to the checkbox
-  semesterCheckbox.onchange = function () {
-    contentGenerator.displayVisitedModules(visitedModules, student.getAverageGrade(), student.getEctsObtainedTotal(), creditsByType, ectsResult_from_API);
-  };
-}
-
-function get_current_semester() {
-  const currentMonth = new Date().getMonth();
-  const currentYear = new Date().getFullYear();
-  return currentMonth >= 1 && currentMonth < 7
-    ? `F${(currentYear % 100)}` // If current month is Feb-Jun, set to FYY
-    : currentMonth >= 7
-      ? `H${(currentYear % 100)}` // If current month is Jul-Dec, set to HYY
-      : `H${(currentYear % 100) - 1}`; // If current month is Jan, set to H(YY - 1)
-}
-
+// Call the main function
 displayContent();
