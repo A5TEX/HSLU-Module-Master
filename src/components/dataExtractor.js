@@ -841,15 +841,27 @@ class DataExtractor {
     }
 
     /**
-     * This function retrieves the list of available semesters from the API.
-     * It calls the _fetchData_API() function with the '/semesters/available' path to fetch the data.
-     * The 'semesters' property of the 'result' property of the fetched data is then returned.
+     * This asynchronous method fetches available semesters from the API and returns a sorted list.
+     * The semesters are sorted in descending order by their number (extracted from the semester string).
+     * If two semesters have the same number, the one starting with 'H' is placed before the one starting with 'F'.
      * 
-     * @returns {Array} The list of available semesters.
+     * @returns {Promise<Array<string>>} A promise that resolves to a sorted list of semester strings.
      */
     async get_semester_list() {
         let data = await this._fetchData_API('/semesters/available');
         const semesterList = data.result;
-        return semesterList.semesters;
+        const return_list = semesterList.semesters.sort((a, b) => {
+            let numA = parseInt(a.slice(1));
+            let numB = parseInt(b.slice(1));
+        
+            if (numA !== numB) {
+                // Sort by number in descending order
+                return numB - numA;
+            } else {
+                // If numbers are equal, sort 'H' before 'F'
+                return a[0] === 'H' ? -1 : 1;
+            }
+        });
+        return return_list;
     }
 }
