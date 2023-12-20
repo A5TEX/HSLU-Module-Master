@@ -67,6 +67,7 @@ class ContentGenerator {
    * @param {Object} module - The module for which to display information.
    */
   displayModuleInfo(module) {
+    console.log(module);
     const elements = document.querySelectorAll(".module-title");
     // Get previous Module in module List
     if (this.previousModuleInModuleInfoBox != null) {
@@ -119,6 +120,11 @@ class ContentGenerator {
       <em>Sprache:</em> ${module["Language"]}
       <br><br>
       <em>Beschreibung:</em><br>${module["Description"] || "No description available."}
+      <br><br>
+      <em>Art des Leistungsnachweises:</em><br>${module["ModeOfAssessments"][0]}
+      <br><br>
+      <em>Arbeitsaufwand:</em><br>Geführtes Studium: ${module["Workload"]["AssistedStudy"]}<br>Begleitetes Selbststudium: ${module["Workload"]["ConductedStudy"]}<br>Individuelles Selbststudium: ${module["Workload"]["IndividualStudy"]}
+      <br><br>
       `;
     this.previousModuleInModuleInfoBox = module;
   }
